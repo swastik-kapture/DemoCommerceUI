@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON Data in Tabular Format</title>
+</head>
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+    <script>
+        const baseURL = 'http://localhost:5000';
+
+        // Function to call the API and generate the list
+        function getDataAndGenerateList(id, endpoint, isGetAll) {
+            const apiUrl = isGetAll ? `${baseURL}/${endpoint}` : `${baseURL}/${endpoint}?id=${id}`;
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    generateList(data);
+                })
+                .catch(error => {
+                    console.error('GET request error:', error);
+                });
+        }
+
+        // Function to generate the list from the response data
+        function generateList(data) {
+            console.log("response is => " + data);
+            var tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = ""; 
+
+            data.dataList[0].forEach(item => {
+                var row = document.createElement("tr");
+                row.innerHTML = "<td>" + item.id + "</td>" +
+                    "<td>" + item.name + "</td>" +
+                    "<td>" + item.email + "</td>" +
+                    "<td>" + item.phone + "</td>" +
+                    "<td>" + item.address + "</td>" +
+                    "<td><button onclick='showDetails(" + JSON.stringify(item) + ")'>Show Details</button></td>";
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to show the details of a particular row
+        function showDetails(item) {
+            alert("ID: " + item.id + "\nName: " + item.name + "\nEmail: " + item.email + "\nPhone: " + item.phone + "\nAddress: " + item.address);
+        }
+
+    
+        getDataAndGenerateList(null, 'cc/getall', true); 
+
+    </script>
+</body>
+</html>
